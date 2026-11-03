@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { Heading } from "@/components/ui/Heading";
 import { Section } from "@/components/ui/Section";
@@ -7,16 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { FiHome, FiBook } from "react-icons/fi";
 
 export const metadata: Metadata = {
-  title: "BookNook | Page Not Found",
-  description:
-    "The chapter or page you are looking for has wandered off our library shelves.",
+  title: "Page Not Found",
+  description: "The volume or chapter you are looking for does not exist in our library archives.",
 };
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-base-100 text-base-content px-4">
+    <div className="flex-1 flex items-center justify-center py-16 sm:py-24 px-4">
       <Section spacing="compact" className="text-center max-w-xl mx-auto flex flex-col items-center">
-        <div className="w-20 h-20 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-4xl mb-6 shadow-sm">
+        <div className="w-20 h-20 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-4xl mb-6 shadow-xs">
           <FiBook />
         </div>
 
@@ -52,4 +50,3 @@ export default function NotFound() {
     </div>
   );
 }
-
