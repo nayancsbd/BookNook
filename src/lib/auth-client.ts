@@ -10,3 +10,14 @@ export const authClient = createAuthClient({
 });
 
 export const { signIn, signOut, signUp, useSession } = authClient;
+
+export async function getJwtToken(): Promise<string | null> {
+  try {
+    const res = await authClient.$fetch<{ token: string }>("/token", {
+      method: "GET",
+    });
+    return res.data?.token ?? null;
+  } catch {
+    return null;
+  }
+}
