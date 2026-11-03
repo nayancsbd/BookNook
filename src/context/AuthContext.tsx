@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 export interface User {
@@ -11,55 +12,55 @@ export interface User {
   role?: string;
 }
 
-const DEMO_USER: User = {
-  id: "usr_reader_01",
-  name: "Eleanor Vance",
-  email: "eleanor@booknook.library",
-  image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=256&h=256",
-  role: "Curator",
-};
-
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (userData?: Partial<User>) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   toggleAuth: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: sessionData, isPending: sessionLoading } = authClient.useSession();
+  const [mockUser, setMockUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const savedState = localStorage.getItem("booknook-mock-auth");
-    if (savedState === "authenticated") {
-      setUser(DEMO_USER);
-    }
-    setIsLoading(false);
-  }, []);
+  const activeUser: User | null = sessionData?.user
+    ? {
+        id: sessionData.user.id,
+        name: sessionData.user.name,
+        email: sessionData.user.email,
+        image: sessionData.user.image || undefined,
+      }
+    : mockUser;
 
   const login = (userData?: Partial<User>) => {
-    const activeUser = { ...DEMO_USER, ...userData };
-    setUser(activeUser);
-    localStorage.setItem("booknook-mock-auth", "authenticated");
+    const demo = {
+      id: "usr_reader_01",
+      name: "Eleanor Vance",
+      email: "eleanor@booknook.library",
+      image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=256&h=256",
+      ...userData,
+    };
+    setMockUser(demo);
     toast.success("Welcome back!", {
-      description: `Signed in as ${activeUser.name}`,
+      description: `Signed in as ${demo.name}`,
     });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("booknook-mock-auth");
+  const logout = async () => {
+    try {
+      await authClient.signOut();
+    } catch {}
+    setMockUser(null);
     toast.info("Signed out", {
       description: "You have been logged out of your library sanctuary.",
     });
   };
 
   const toggleAuth = () => {
-    if (user) {
+    if (activeUser) {
       logout();
     } else {
       login();
@@ -69,8 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isLoading,
+        user: activeUser,
+        isLoading: sessionLoading,
         login,
         logout,
         toggleAuth,
@@ -88,4 +89,3 @@ export function useAuth() {
   }
   return context;
 }
-
