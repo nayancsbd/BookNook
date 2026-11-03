@@ -16,5 +16,7 @@ export interface Book {
   description?: string;
   quantity?: number;
   rating?: number;
+  userName?: string;
+  userEmail?: string;
   createdAt?: string;
 }
