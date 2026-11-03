@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
@@ -58,7 +59,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans bg-base-100 text-base-content antialiased">
         <AuthProvider>
-          <Navbar />
+          <Suspense fallback={<header className="h-16 sm:h-20 border-b border-base-300 bg-base-100" />}>
+            <Navbar />
+          </Suspense>
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />
           <ToastProvider />

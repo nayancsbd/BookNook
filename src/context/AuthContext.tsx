@@ -43,6 +43,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=256&h=256",
       ...userData,
     };
+    if (typeof document !== "undefined") {
+      document.cookie = "better-auth.session_token=mock_session_token; path=/; max-age=604800; SameSite=Lax";
+    }
     setMockUser(demo);
     toast.success("Welcome back!", {
       description: `Signed in as ${demo.name}`,
@@ -53,6 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authClient.signOut();
     } catch {}
+    if (typeof document !== "undefined") {
+      document.cookie = "better-auth.session_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
     setMockUser(null);
     toast.info("Signed out", {
       description: "You have been logged out of your library sanctuary.",

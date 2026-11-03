@@ -30,7 +30,7 @@ interface NavLinkItem {
 const NAV_LINKS: NavLinkItem[] = [
   { name: "Home", href: "/", icon: <FiHome /> },
   { name: "All Books", href: "/books", icon: <FiBook /> },
-  { name: "Add Book", href: "/books/add", icon: <FiPlusCircle />, authRequired: true },
+  { name: "Add Book", href: "/add-book", icon: <FiPlusCircle />, authRequired: true },
   { name: "My Books", href: "/my-books", icon: <FiBookOpen />, authRequired: true },
   { name: "My Borrows", href: "/my-borrows", icon: <FiClock />, authRequired: true },
 ];
@@ -132,7 +132,7 @@ export function Navbar() {
 
                 <li>
                   <Link
-                    href="/profile"
+                    href="/my-profile"
                     className="flex items-center gap-2.5 py-2 hover:bg-base-200 rounded-lg"
                   >
                     <FiUser className="w-4 h-4 text-primary" />
