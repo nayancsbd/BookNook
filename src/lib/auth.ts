@@ -3,7 +3,6 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { MongoClient } from "mongodb";
-import { url } from "inspector";
 
 const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/booknook";
 
