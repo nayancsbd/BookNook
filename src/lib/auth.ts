@@ -3,11 +3,12 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { MongoClient } from "mongodb";
+import { url } from "inspector";
 
 const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/booknook";
 
 const client = new MongoClient(uri);
-const db = client.db("booknook");
+const db = client.db("book-nook");
 
 const passwordRulePlugin = {
   id: "password-rule-validator",

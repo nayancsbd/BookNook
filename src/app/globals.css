@@ -196,3 +196,31 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(194, 109, 26, 0.25);
 }
+
+.booknook-hero-swiper .swiper-button-next,
+.booknook-hero-swiper .swiper-button-prev {
+  color: #FAF7F2;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background-color: rgba(20, 18, 14, 0.45);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.booknook-hero-swiper .swiper-button-next:after,
+.booknook-hero-swiper .swiper-button-prev:after {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.booknook-hero-swiper .swiper-button-next:hover,
+.booknook-hero-swiper .swiper-button-prev:hover {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+  transform: scale(1.08);
+}
+
+.booknook-hero-swiper .swiper-pagination {
+  bottom: 1.75rem !important;
+}
