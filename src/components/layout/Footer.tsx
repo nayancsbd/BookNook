@@ -83,7 +83,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/books/add" className="hover:text-primary transition-colors">
+                <Link href="/add-book" className="hover:text-primary transition-colors">
                   Contribute a Book
                 </Link>
               </li>

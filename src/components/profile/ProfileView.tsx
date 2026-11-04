@@ -2,11 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
 import {
-  FiUser,
   FiMail,
   FiBookOpen,
   FiClock,
@@ -26,7 +26,12 @@ export function ProfileView() {
   const initial = user.name ? user.name.charAt(0).toUpperCase() : "R";
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6"
+    >
       <div className="rounded-3xl border border-base-300 bg-base-100 shadow-xl overflow-hidden backdrop-blur-sm">
         <div className="h-36 sm:h-44 bg-gradient-to-r from-primary via-primary/90 to-secondary/80 relative">
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#FAF7F2_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -156,7 +161,7 @@ export function ProfileView() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

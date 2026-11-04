@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -37,7 +36,7 @@ const NAV_LINKS: NavLinkItem[] = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { user, logout, toggleAuth } = useAuth();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const visibleLinks = NAV_LINKS.filter(

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Heading } from "@/components/ui/Heading";
 import {
   FiPlusCircle,
@@ -69,9 +70,10 @@ export function HowItWorks() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
           {STEPS.map((step) => (
-            <div
+            <motion.div
               key={step.number}
-              className="relative flex flex-col rounded-3xl border border-base-300 bg-base-100 p-8 shadow-xs hover:shadow-md transition-all duration-300 group"
+              whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
+              className="relative flex flex-col rounded-3xl border border-base-300 bg-base-100 p-8 shadow-xs hover:shadow-lg transition-shadow duration-300 group"
             >
               <div className="flex items-center justify-between mb-6">
                 <div
@@ -96,7 +98,7 @@ export function HowItWorks() {
               <p className="text-sm text-base-content/75 font-sans leading-relaxed mt-2 flex-1">
                 {step.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -105,4 +107,3 @@ export function HowItWorks() {
 }
 
 export default HowItWorks;
-

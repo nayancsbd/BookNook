@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useApiToken } from "@/hooks/useApiToken";
 import { Heading } from "@/components/ui/Heading";
@@ -214,7 +215,12 @@ export function AddBookForm() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6"
+    >
       <div className="rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-10 shadow-xl backdrop-blur-sm">
         <div className="text-center mb-10 flex flex-col items-center">
           <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-3xl mb-4 shadow-xs">
@@ -430,7 +436,7 @@ export function AddBookForm() {
           </Button>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

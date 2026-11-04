@@ -8,15 +8,10 @@ interface BookDetailsProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: BookDetailsProps): Promise<Metadata> {
-  const { id } = await params;
-  return {
-    title: "Book Details",
-    description: `View full details and borrowing options for edition #${id}.`,
-  };
-}
+export const metadata: Metadata = {
+  title: "Book Details",
+  description: "View full details and borrowing options for this edition in the BookNook sanctuary.",
+};
 
 async function BookDetailsContent({ params }: BookDetailsProps) {
   const { id } = await params;

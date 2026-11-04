@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Book } from "@/types/book";
 import { useAuth } from "@/context/AuthContext";
 import { useApiToken } from "@/hooks/useApiToken";
@@ -20,9 +21,7 @@ import {
   FiLayers,
   FiHash,
   FiFileText,
-  FiUploadCloud,
   FiImage,
-  FiCheckCircle,
 } from "react-icons/fi";
 
 const CATEGORIES = [
@@ -88,7 +87,6 @@ export function MyBooksView() {
       }
 
       if (isMounted) {
-        const userEmailNormalized = user.email.toLowerCase();
         const fallbackBooks: Book[] = [
           {
             _id: "my_b_01",
@@ -529,7 +527,12 @@ export function MyBooksView() {
 
       {editingBook && (
         <dialog className="modal modal-open">
-          <div className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto"
+          >
             <button
               type="button"
               onClick={() => setEditingBook(null)}
@@ -699,7 +702,7 @@ export function MyBooksView() {
                 </Button>
               </div>
             </form>
-          </div>
+          </motion.div>
           <div
             className="modal-backdrop bg-black/45 backdrop-blur-xs"
             onClick={() => {
@@ -711,7 +714,12 @@ export function MyBooksView() {
 
       {deletingBook && (
         <dialog className="modal modal-open">
-          <div className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-md shadow-2xl relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-md shadow-2xl relative"
+          >
             <div className="w-12 h-12 rounded-2xl bg-error/15 text-error flex items-center justify-center text-2xl mb-4 shadow-xs">
               <FiAlertTriangle />
             </div>
@@ -743,7 +751,7 @@ export function MyBooksView() {
                 Remove Book
               </Button>
             </div>
-          </div>
+          </motion.div>
           <div
             className="modal-backdrop bg-black/45 backdrop-blur-xs"
             onClick={() => {

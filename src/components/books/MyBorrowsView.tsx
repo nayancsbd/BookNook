@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { BorrowRecord } from "@/types/book";
 import { useAuth } from "@/context/AuthContext";
 import { useApiToken } from "@/hooks/useApiToken";
@@ -338,7 +339,12 @@ export function MyBorrowsView() {
 
       {returningBorrow && (
         <dialog className="modal modal-open">
-          <div className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-md shadow-2xl relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-md shadow-2xl relative"
+          >
             <button
               type="button"
               onClick={handleCloseReturnModal}
@@ -384,7 +390,7 @@ export function MyBorrowsView() {
                 <span>Confirm Return</span>
               </Button>
             </div>
-          </div>
+          </motion.div>
           <div
             className="modal-backdrop bg-black/45 backdrop-blur-xs"
             onClick={handleCloseReturnModal}

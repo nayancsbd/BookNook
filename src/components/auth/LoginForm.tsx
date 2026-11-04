@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
 import { sanitizeCallbackUrl } from "@/lib/utils";
 import { Heading } from "@/components/ui/Heading";
@@ -96,7 +97,12 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-md mx-auto"
+    >
       <div className="rounded-3xl border border-base-300 bg-base-100 p-8 sm:p-10 shadow-lg backdrop-blur-sm">
         <div className="text-center mb-8 flex flex-col items-center">
           <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-2xl mb-4 shadow-xs">
@@ -248,7 +254,12 @@ export function LoginForm() {
 
       {forgotModalOpen && (
         <dialog className="modal modal-open">
-          <div className="modal-box rounded-2xl border border-base-300 bg-base-100 p-6 max-w-md shadow-2xl">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="modal-box rounded-2xl border border-base-300 bg-base-100 p-6 max-w-md shadow-2xl"
+          >
             <div className="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center text-2xl mb-4">
               <FiInfo />
             </div>
@@ -274,14 +285,14 @@ export function LoginForm() {
                 Understood
               </button>
             </div>
-          </div>
+          </motion.div>
           <div
             className="modal-backdrop bg-black/40"
             onClick={() => setForgotModalOpen(false)}
           />
         </dialog>
       )}
-    </div>
+    </motion.div>
   );
 }
 

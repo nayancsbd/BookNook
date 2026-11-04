@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Book, BookCategory } from "@/types/book";
+import { motion } from "framer-motion";
+import { Book } from "@/types/book";
 import { BookCard } from "@/components/books/BookCard";
 import { Heading } from "@/components/ui/Heading";
 import { Spinner } from "@/components/ui/Spinner";
@@ -265,7 +266,12 @@ export function BooksCatalog() {
   }, [serverBooks, search, selectedCategory]);
 
   return (
-    <div className="booknook-section">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="booknook-section"
+    >
       <div className="max-w-7xl mx-auto space-y-10">
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wider uppercase font-sans">
@@ -373,7 +379,7 @@ export function BooksCatalog() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { Book } from "@/types/book";
 import { useAuth } from "@/context/AuthContext";
 import { useApiToken } from "@/hooks/useApiToken";
@@ -17,10 +18,7 @@ import {
   FiBookmark,
   FiCalendar,
   FiCheckCircle,
-  FiArrowLeft,
   FiCheck,
-  FiLayers,
-  FiHash,
   FiX,
   FiBookOpen,
 } from "react-icons/fi";
@@ -461,7 +459,12 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
 
       {isBorrowModalOpen && (
         <dialog className="modal modal-open">
-          <div className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-lg shadow-2xl relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="modal-box rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-8 max-w-lg shadow-2xl relative"
+          >
             <button
               type="button"
               onClick={() => setIsBorrowModalOpen(false)}
@@ -586,7 +589,7 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
                 Confirm Borrow
               </Button>
             </div>
-          </div>
+          </motion.div>
           <div
             className="modal-backdrop bg-black/45 backdrop-blur-xs"
             onClick={() => {

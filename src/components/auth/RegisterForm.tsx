@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
 import { sanitizeCallbackUrl } from "@/lib/utils";
 import { Heading } from "@/components/ui/Heading";
@@ -127,7 +128,12 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-lg mx-auto"
+    >
       <div className="rounded-3xl border border-base-300 bg-base-100 p-8 sm:p-10 shadow-lg backdrop-blur-sm">
         <div className="text-center mb-8 flex flex-col items-center">
           <div className="w-12 h-12 rounded-2xl bg-secondary/15 text-secondary flex items-center justify-center text-2xl mb-4 shadow-xs">
@@ -383,7 +389,7 @@ export function RegisterForm() {
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

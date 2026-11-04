@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Book } from "@/types/book";
 import { Button } from "@/components/ui/Button";
 import { FiBookOpen, FiUser, FiArrowRight } from "react-icons/fi";
@@ -18,8 +19,9 @@ export function BookCard({ book, className = "" }: BookCardProps) {
   const detailsHref = `/books/${bookId}`;
 
   return (
-    <article
-      className={`group h-full flex flex-col rounded-2xl border border-base-300 bg-base-100 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden ${className}`}
+    <motion.article
+      whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
+      className={`group h-full flex flex-col rounded-2xl border border-base-300 bg-base-100 shadow-xs hover:shadow-lg transition-shadow duration-300 overflow-hidden ${className}`}
     >
       <Link
         href={detailsHref}
@@ -74,9 +76,8 @@ export function BookCard({ book, className = "" }: BookCardProps) {
           </Button>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
 export default BookCard;
-

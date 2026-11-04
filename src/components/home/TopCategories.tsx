@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Heading } from "@/components/ui/Heading";
 import {
   FiBookOpen,
@@ -50,18 +51,18 @@ const CATEGORIES: CategoryItem[] = [
   {
     id: "Kids",
     name: "Kids",
-    description: "Enchanting picture books, illustrated fables, and young reader adventures.",
+    description: "Bedtime fairy tales, vibrant picture books, and young reader adventures.",
     icon: <FiSmile className="w-6 h-6" />,
-    accentClass: "text-info bg-info/10 group-hover:bg-info group-hover:text-info-content",
-    badgeCount: "1,350+ Books",
+    accentClass: "text-primary bg-primary/10 group-hover:bg-primary group-hover:text-primary-content",
+    badgeCount: "950+ Books",
   },
   {
     id: "Others",
     name: "Others",
-    description: "Philosophy, poetry collections, thoughtful essays, and culinary memoirs.",
+    description: "Philosophy essays, graphic novels, culinary journals, and artisan zines.",
     icon: <FiGrid className="w-6 h-6" />,
-    accentClass: "text-neutral-content bg-neutral group-hover:bg-primary group-hover:text-primary-content",
-    badgeCount: "980+ Books",
+    accentClass: "text-secondary bg-secondary/15 group-hover:bg-secondary group-hover:text-secondary-content",
+    badgeCount: "1,120+ Books",
   },
 ];
 
@@ -86,38 +87,43 @@ export function TopCategories() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 sm:gap-6">
           {CATEGORIES.map((category) => (
-            <Link
+            <motion.div
               key={category.id}
-              href={`/books?category=${category.name}`}
-              className="group flex flex-col justify-between rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xs hover:shadow-lg hover:border-primary/40 transition-all duration-300 relative overflow-hidden"
+              whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
+              className="h-full"
             >
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 ${category.accentClass}`}
-                  >
-                    {category.icon}
+              <Link
+                href={`/books?category=${category.name}`}
+                className="group flex flex-col justify-between h-full rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xs hover:shadow-lg hover:border-primary/40 transition-shadow duration-300 relative overflow-hidden"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-5">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 ${category.accentClass}`}
+                    >
+                      {category.icon}
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-base-200 flex items-center justify-center text-base-content/50 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+                      <FiArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-base-200 flex items-center justify-center text-base-content/50 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
-                    <FiArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </div>
+
+                  <h3 className="font-serif font-bold text-xl text-base-content mb-2 group-hover:text-primary transition-colors">
+                    {category.name}
+                  </h3>
+
+                  <p className="text-xs text-base-content/70 font-sans leading-relaxed line-clamp-3">
+                    {category.description}
+                  </p>
                 </div>
 
-                <h3 className="font-serif font-bold text-xl text-base-content mb-2 group-hover:text-primary transition-colors">
-                  {category.name}
-                </h3>
-
-                <p className="text-xs text-base-content/70 font-sans leading-relaxed line-clamp-3">
-                  {category.description}
-                </p>
-              </div>
-
-              <div className="pt-4 mt-6 border-t border-base-300/60">
-                <span className="text-[11px] font-sans font-semibold text-secondary uppercase tracking-wider">
-                  {category.badgeCount}
-                </span>
-              </div>
-            </Link>
+                <div className="pt-4 mt-6 border-t border-base-300/60">
+                  <span className="text-[11px] font-sans font-semibold text-secondary uppercase tracking-wider">
+                    {category.badgeCount}
+                  </span>
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -126,4 +132,3 @@ export function TopCategories() {
 }
 
 export default TopCategories;
-
