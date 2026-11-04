@@ -134,7 +134,9 @@ export function MyBooksView() {
     setEditAuthor(book.author || "");
     setEditCategory(book.category || "Fiction");
     setEditDescription(book.description || "");
-    setEditQuantity(String(book.quantity ?? 1));
+    setEditQuantity(
+      String(book.totalCopies ?? book.copies ?? book.quantity ?? 1)
+    );
     setEditImagePreview(book.image || null);
     setEditImageFile(null);
   };
@@ -221,6 +223,8 @@ export function MyBooksView() {
         author: editAuthor.trim(),
         category: editCategory,
         description: editDescription.trim(),
+        totalCopies: copiesCount,
+        copies: copiesCount,
         quantity: copiesCount,
         image: finalImageUrl,
       };

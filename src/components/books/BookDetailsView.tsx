@@ -145,7 +145,14 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
           const data: Book = await res.json();
           if (isMounted && data) {
             setBook(data);
-            const count = data.quantity ?? 1;
+            const count =
+              typeof data.copies === "number"
+                ? data.copies
+                : typeof data.quantity === "number"
+                ? data.quantity
+                : typeof data.totalCopies === "number"
+                ? data.totalCopies
+                : 1;
             setCopies(count);
             setIsLoading(false);
             return;
@@ -164,7 +171,11 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
           _id: bookId,
         };
         setBook(resolvedBook);
-        setCopies(resolvedBook.quantity ?? 1);
+        setCopies(
+          typeof resolvedBook.copies === "number"
+            ? resolvedBook.copies
+            : resolvedBook.quantity ?? 1
+        );
         setIsLoading(false);
       }
     }

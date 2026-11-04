@@ -178,6 +178,8 @@ export function AddBookForm() {
         category,
         image: finalImageUrl,
         description: description.trim(),
+        totalCopies: copiesCount,
+        copies: copiesCount,
         quantity: copiesCount,
         userName: user?.name || "Anonymous Reader",
         userEmail: user?.email || "",

@@ -14,6 +14,8 @@ export interface Book {
   category: BookCategory;
   image: string;
   description?: string;
+  totalCopies?: number;
+  copies?: number;
   quantity?: number;
   rating?: number;
   userName?: string;
