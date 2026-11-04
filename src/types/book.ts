@@ -20,3 +20,22 @@ export interface Book {
   userEmail?: string;
   createdAt?: string;
 }
+
+export interface BorrowRecord {
+  _id: string;
+  id?: string;
+  bookId: string;
+  bookTitle?: string;
+  title?: string;
+  bookImage?: string;
+  image?: string;
+  category?: string;
+  userEmail: string;
+  userName?: string;
+  borrowDate?: string;
+  borrowedAt?: string;
+  createdAt?: string;
+  returnDate: string;
+  dueDate?: string;
+}
+

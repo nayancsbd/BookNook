@@ -18,9 +18,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function BookDetailsPage({ params }: BookDetailsProps) {
+async function BookDetailsContent({ params }: BookDetailsProps) {
   const { id } = await params;
+  return <BookDetailsView bookId={id} />;
+}
 
+export default function BookDetailsPage({ params }: BookDetailsProps) {
   return (
     <PrivateRoute>
       <Suspense
@@ -30,7 +33,7 @@ export default async function BookDetailsPage({ params }: BookDetailsProps) {
           </div>
         }
       >
-        <BookDetailsView bookId={id} />
+        <BookDetailsContent params={params} />
       </Suspense>
     </PrivateRoute>
   );
