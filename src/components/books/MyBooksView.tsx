@@ -9,6 +9,7 @@ import { useApiToken } from "@/hooks/useApiToken";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { getApiUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   FiBookOpen,
@@ -64,12 +65,7 @@ export function MyBooksView() {
 
       setIsLoading(true);
       try {
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const baseUrl = rawApiUrl.replace(/\/+$/, "");
-        const targetUrl = baseUrl.endsWith("/api")
-          ? `${baseUrl}/books?addedBy=${encodeURIComponent(user.email)}`
-          : `${baseUrl}/api/books?addedBy=${encodeURIComponent(user.email)}`;
-
+        const targetUrl = getApiUrl(`/books?addedBy=${encodeURIComponent(user.email)}`);
         const res = await fetch(targetUrl);
         if (res.ok) {
           const data = await res.json();
@@ -79,45 +75,20 @@ export function MyBooksView() {
 
           if (isMounted) {
             setBooks(items);
-            setIsLoading(false);
-            return;
+          }
+        } else {
+          if (isMounted) {
+            setBooks([]);
           }
         }
       } catch {
-      }
-
-      if (isMounted) {
-        const fallbackBooks: Book[] = [
-          {
-            _id: "my_b_01",
-            title: "The Midnight Library",
-            author: "Matt Haig",
-            category: "Fiction",
-            image:
-              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
-            description:
-              "Between life and death there is a library containing infinite books, each telling the story of another reality you could have lived.",
-            quantity: 3,
-            userName: user.name,
-            userEmail: user.email,
-          },
-          {
-            _id: "my_b_02",
-            title: "The Little Prince",
-            author: "Antoine de Saint-Exupéry",
-            category: "Kids",
-            image:
-              "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
-            description:
-              "A poetic tale of a young prince who visits various planets in space, addressing themes of loneliness, friendship, love, and loss.",
-            quantity: 2,
-            userName: user.name,
-            userEmail: user.email,
-          },
-        ];
-
-        setBooks(fallbackBooks);
-        setIsLoading(false);
+        if (isMounted) {
+          setBooks([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
@@ -202,13 +173,8 @@ export function MyBooksView() {
       }
 
       const token = await fetchToken();
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const baseUrl = rawApiUrl.replace(/\/+$/, "");
       const bookId = editingBook._id || editingBook.id;
-
-      const targetUrl = baseUrl.endsWith("/api")
-        ? `${baseUrl}/books/${bookId}`
-        : `${baseUrl}/api/books/${bookId}`;
+      const targetUrl = getApiUrl(`/books/${bookId}`);
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -275,13 +241,8 @@ export function MyBooksView() {
 
     try {
       const token = await fetchToken();
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const baseUrl = rawApiUrl.replace(/\/+$/, "");
       const bookId = deletingBook._id || deletingBook.id;
-
-      const targetUrl = baseUrl.endsWith("/api")
-        ? `${baseUrl}/books/${bookId}`
-        : `${baseUrl}/api/books/${bookId}`;
+      const targetUrl = getApiUrl(`/books/${bookId}`);
 
       const headers: Record<string, string> = {};
       if (token) {

@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 
 export default function MyBorrowsPage() {
   return (
-    <PrivateRoute>
-      <Suspense
-        fallback={
-          <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
-            <Spinner size="lg" label="Retrieving your borrowed books..." />
-          </div>
-        }
-      >
+    <Suspense
+      fallback={
+        <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
+          <Spinner size="lg" label="Retrieving your borrowed books..." />
+        </div>
+      }
+    >
+      <PrivateRoute>
         <MyBorrowsView />
-      </Suspense>
-    </PrivateRoute>
+      </PrivateRoute>
+    </Suspense>
   );
 }

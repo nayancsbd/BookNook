@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { HomeHeroSlider } from "./HomeHeroSlider";
 import { NewArrivals } from "./NewArrivals";
 import { HowItWorks } from "./HowItWorks";
 import { TopCategories } from "./TopCategories";
 
-const sectionVariants = {
+const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,

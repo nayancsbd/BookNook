@@ -24,3 +24,13 @@ export function sanitizeCallbackUrl(url: string | null | undefined): string {
   }
   return "/";
 }
+
+export function getApiUrl(path: string): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+  const baseUrl = envUrl.replace(/\/+$/, "");
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  if (baseUrl.endsWith("/api") && cleanPath.startsWith("/api/")) {
+    return `${baseUrl}${cleanPath.substring(4)}`;
+  }
+  return `${baseUrl}${cleanPath}`;
+}

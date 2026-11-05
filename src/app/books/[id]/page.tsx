@@ -20,16 +20,16 @@ async function BookDetailsContent({ params }: BookDetailsProps) {
 
 export default function BookDetailsPage({ params }: BookDetailsProps) {
   return (
-    <PrivateRoute>
-      <Suspense
-        fallback={
-          <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
-            <Spinner size="lg" label="Retrieving volume from sanctuary archives..." />
-          </div>
-        }
-      >
+    <Suspense
+      fallback={
+        <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
+          <Spinner size="lg" label="Retrieving volume from sanctuary archives..." />
+        </div>
+      }
+    >
+      <PrivateRoute>
         <BookDetailsContent params={params} />
-      </Suspense>
-    </PrivateRoute>
+      </PrivateRoute>
+    </Suspense>
   );
 }

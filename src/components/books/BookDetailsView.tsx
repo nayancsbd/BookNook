@@ -10,6 +10,7 @@ import { useApiToken } from "@/hooks/useApiToken";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { getApiUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   FiBook,
@@ -22,87 +23,6 @@ import {
   FiX,
   FiBookOpen,
 } from "react-icons/fi";
-
-const FALLBACK_CATALOG: Book[] = [
-  {
-    _id: "book_01",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Between life and death there is a library containing infinite books, each telling the story of another reality you could have lived. Nora Seed finds herself faced with the possibility of changing her life for a new one, undoing old regrets and finding the life she truly wanted.",
-    quantity: 4,
-    userName: "Eleanor Vance",
-    userEmail: "eleanor@booknook.library",
-  },
-  {
-    _id: "book_02",
-    title: "Cosmos",
-    author: "Carl Sagan",
-    category: "Science",
-    image:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
-    description:
-      "The story of fifteen billion years of cosmic evolution transforming matter into consciousness. Carl Sagan retraces the history of science and humanity's growing awareness of the cosmos with lyrical beauty and profound curiosity.",
-    quantity: 3,
-    userName: "Julian Thorne",
-    userEmail: "julian@booknook.library",
-  },
-  {
-    _id: "book_03",
-    title: "Sapiens: A Brief History of Humankind",
-    author: "Yuval Noah Harari",
-    category: "History",
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=600",
-    description:
-      "One hundred thousand years ago, at least six different species of humans inhabited Earth. Yet today there is only one—Homo sapiens. How did our species succeed in the battle for dominance? An exploration of our origins, societies, and future.",
-    quantity: 2,
-    userName: "Miriam Gray",
-    userEmail: "miriam@booknook.library",
-  },
-  {
-    _id: "book_04",
-    title: "The Little Prince",
-    author: "Antoine de Saint-Exupéry",
-    category: "Kids",
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A poetic tale of a young prince who visits various planets in space, addressing themes of loneliness, friendship, love, and loss with enchanting simplicity and philosophical depth.",
-    quantity: 5,
-    userName: "Eleanor Vance",
-    userEmail: "eleanor@booknook.library",
-  },
-  {
-    _id: "book_05",
-    title: "Braiding Sweetgrass",
-    author: "Robin Wall Kimmerer",
-    category: "Others",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Drawing on her life as an indigenous scientist, and as a woman, Kimmerer shows how other living beings offer us gifts and lessons, even if we've forgotten how to hear their voices.",
-    quantity: 3,
-    userName: "Sarah Jenkins",
-    userEmail: "sarah@booknook.library",
-  },
-  {
-    _id: "book_06",
-    title: "Before the Coffee Gets Cold",
-    author: "Toshikazu Kawaguchi",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600",
-    description:
-      "In a small back alley in Tokyo, there is a café which has been brewing carefully crafted coffee for more than one hundred years. But this coffee shop offers its customers a unique experience: the chance to travel back in time, provided they return before the coffee gets cold.",
-    quantity: 1,
-    userName: "Arthur Pendelton",
-    userEmail: "arthur@booknook.library",
-  },
-];
 
 interface BookDetailsViewProps {
   bookId: string;
@@ -134,13 +54,13 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
     async function loadBook() {
       setIsLoading(true);
       try {
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const baseUrl = rawApiUrl.replace(/\/+$/, "");
-        const targetUrl = baseUrl.endsWith("/api")
-          ? `${baseUrl}/books/${bookId}`
-          : `${baseUrl}/api/books/${bookId}`;
-
-        const res = await fetch(targetUrl);
+        const token = await fetchToken();
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        const targetUrl = getApiUrl(`/books/${bookId}`);
+        const res = await fetch(targetUrl, { headers });
         if (res.ok) {
           const data: Book = await res.json();
           if (isMounted && data) {
@@ -154,29 +74,20 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
                 ? data.totalCopies
                 : 1;
             setCopies(count);
-            setIsLoading(false);
-            return;
+          }
+        } else {
+          if (isMounted) {
+            setBook(null);
           }
         }
       } catch {
-      }
-
-      if (isMounted) {
-        const matched =
-          FALLBACK_CATALOG.find((b) => b._id === bookId || b.id === bookId) ||
-          FALLBACK_CATALOG[0];
-
-        const resolvedBook: Book = {
-          ...matched,
-          _id: bookId,
-        };
-        setBook(resolvedBook);
-        setCopies(
-          typeof resolvedBook.copies === "number"
-            ? resolvedBook.copies
-            : resolvedBook.quantity ?? 1
-        );
-        setIsLoading(false);
+        if (isMounted) {
+          setBook(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
@@ -185,7 +96,7 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
     return () => {
       isMounted = false;
     };
-  }, [bookId]);
+  }, [bookId, fetchToken]);
 
   const handleOpenBorrowModal = () => {
     if (!user) {
@@ -215,12 +126,7 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
 
     try {
       const token = await fetchToken();
-
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const baseUrl = rawApiUrl.replace(/\/+$/, "");
-      const targetUrl = baseUrl.endsWith("/api")
-        ? `${baseUrl}/borrows`
-        : `${baseUrl}/api/borrows`;
+      const targetUrl = getApiUrl("/borrows");
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -231,7 +137,7 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
       }
 
       const borrowPayload = {
-        bookId: book._id || book.id || bookId,
+        bookId: String(book._id || book.id || bookId),
         bookTitle: book.title,
         bookImage: book.image,
         userEmail: user.email,
@@ -282,34 +188,44 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
 
   if (!book) {
     return (
-      <div className="booknook-section text-center py-20">
-        <h2 className="font-serif font-bold text-2xl text-base-content mb-4">
-          Volume Not Found
-        </h2>
-        <p className="text-sm text-base-content/70 font-sans mb-6">
-          The requested book could not be located in our sanctuary archives.
-        </p>
-        <Button href="/books" variant="primary">
-          Back to All Books
-        </Button>
+      <div className="booknook-section text-center py-20 min-h-[60vh] flex flex-col items-center justify-center">
+        <div className="max-w-md mx-auto p-8 sm:p-10 rounded-3xl border border-base-300 bg-base-100 shadow-sm space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-secondary/15 text-secondary flex items-center justify-center text-3xl mx-auto">
+            <FiBookOpen />
+          </div>
+          <h2 className="font-serif font-bold text-2xl text-base-content">
+            Volume Not Found
+          </h2>
+          <p className="text-sm text-base-content/75 font-sans leading-relaxed">
+            The requested book could not be located in our sanctuary archives. It may have been removed or cataloged under a different identifier.
+          </p>
+          <div className="pt-2">
+            <Button href="/books" variant="primary" size="md">
+              Browse Library Catalog
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   const isAvailable = copies > 0;
-  const contributorName = book.userName || "BookNook Curator";
-  const contributorEmail = book.userEmail || "curator@booknook.library";
+  const contributorName =
+    book.userName ||
+    book.addedByName ||
+    "Curator Reader";
+  const contributorEmail =
+    book.userEmail ||
+    book.addedByEmail ||
+    book.addedBy ||
+    "curator@booknook.library";
 
   return (
-    <div className="booknook-section">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center gap-2 text-xs font-sans text-base-content/60">
-          <Link href="/" className="hover:text-primary transition-colors">
-            Home
-          </Link>
-          <span>/</span>
+    <div className="booknook-section min-h-[80vh]">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6 flex items-center gap-2 text-xs sm:text-sm font-sans text-base-content/65">
           <Link href="/books" className="hover:text-primary transition-colors">
-            All Books
+            Library Catalog
           </Link>
           <span>/</span>
           <span className="text-base-content/90 font-medium truncate max-w-xs">
@@ -317,21 +233,21 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
           </span>
         </div>
 
-        <div className="rounded-3xl border border-base-300 bg-base-100 p-6 sm:p-10 lg:p-12 shadow-xl backdrop-blur-sm">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-base-200 border border-base-300 shadow-xl group">
+        <div className="rounded-3xl border border-base-300 bg-base-100 shadow-xl overflow-hidden backdrop-blur-sm">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 p-6 sm:p-10 lg:p-12">
+            <div className="md:col-span-5 lg:col-span-4 flex flex-col items-center">
+              <div className="w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-base-300 bg-base-200 relative group">
                 {!imageError && book.image ? (
                   <img
                     src={book.image}
                     alt={book.title}
                     onError={() => setImageError(true)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 ease-out"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-primary/10 via-base-200 to-secondary/15">
                     <FiBookOpen className="w-16 h-16 text-primary/40 mb-3" />
-                    <span className="font-serif font-bold text-lg text-base-content/60">
+                    <span className="font-serif font-bold text-lg text-base-content/70">
                       {book.title}
                     </span>
                   </div>
@@ -344,7 +260,7 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-base-200/50 border border-base-300 space-y-3">
+              <div className="w-full max-w-sm mt-6 p-5 rounded-2xl bg-base-200/50 border border-base-300 space-y-3">
                 <div className="flex items-center justify-between text-xs font-sans">
                   <span className="text-base-content/70 font-semibold uppercase tracking-wider">
                     Circulation Status
@@ -365,64 +281,47 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
                   <span className="text-base-content/60 block font-medium">
                     Cataloged By
                   </span>
-                  <div className="flex items-center gap-2 text-base-content font-semibold">
+                  <div className="flex items-center gap-1.5 text-base-content font-semibold">
                     <FiUser className="w-3.5 h-3.5 text-primary" />
                     <span>{contributorName}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-base-content/60 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-base-content/70">
                     <FiMail className="w-3.5 h-3.5 text-secondary" />
-                    <span>{contributorEmail}</span>
+                    <span className="truncate">{contributorEmail}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-7 flex flex-col justify-between gap-8">
+            <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-between space-y-6">
               <div className="space-y-6">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/15 text-secondary text-xs font-semibold tracking-wider uppercase font-sans mb-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wider uppercase font-sans mb-3">
                     <FiBook className="w-3.5 h-3.5" />
                     <span>Library Edition</span>
                   </div>
-                  <Heading as="h1" size="hero" className="text-3xl sm:text-4xl lg:text-5xl leading-tight">
+
+                  <Heading as="h1" size="hero" className="leading-tight">
                     {book.title}
                   </Heading>
-                  <p className="text-base sm:text-lg text-base-content/80 font-sans mt-2 flex items-center gap-2">
-                    <span>Written by</span>
-                    <span className="font-semibold text-primary">{book.author}</span>
-                  </p>
-                </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 py-4 border-y border-base-300">
-                  <div className="p-3 rounded-xl bg-base-200/40 border border-base-300/80">
-                    <span className="text-[11px] uppercase tracking-wider text-base-content/60 font-semibold block">
-                      Genre
+                  <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-base-content/75 font-sans">
+                    <span className="flex items-center gap-1.5 font-medium text-base-content">
+                      <FiUser className="w-4 h-4 text-primary" />
+                      <span>{book.author}</span>
                     </span>
-                    <span className="font-semibold text-sm text-base-content mt-0.5 block">
-                      {book.category}
+                    <span className="text-base-content/30">•</span>
+                    <span className="badge badge-outline border-base-300 font-sans text-xs">
+                      Genre: {book.category}
                     </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-base-200/40 border border-base-300/80">
-                    <span className="text-[11px] uppercase tracking-wider text-base-content/60 font-semibold block">
-                      In Stock
-                    </span>
-                    <span className="font-semibold text-sm text-base-content mt-0.5 block">
-                      {copies} {copies === 1 ? "Copy" : "Copies"}
-                    </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-base-200/40 border border-base-300/80 col-span-2 sm:col-span-1">
-                    <span className="text-[11px] uppercase tracking-wider text-base-content/60 font-semibold block">
-                      Loan Duration
-                    </span>
-                    <span className="font-semibold text-sm text-secondary mt-0.5 block">
-                      14 Days Free
+                    <span className="text-base-content/30">•</span>
+                    <span className="font-sans text-xs text-base-content/70">
+                      Total Copies: {book.totalCopies || book.quantity || 1}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 pt-4 border-t border-base-300">
                   <h2 className="font-serif font-bold text-xl text-base-content flex items-center gap-2">
                     <FiBookOpen className="w-5 h-5 text-primary" />
                     <span>About This Edition</span>
@@ -614,4 +513,3 @@ export function BookDetailsView({ bookId }: BookDetailsViewProps) {
 }
 
 export default BookDetailsView;
-

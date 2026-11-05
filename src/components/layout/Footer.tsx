@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { FiBookOpen, FiMail, FiPhone, FiMapPin, FiClock } from "react-icons/fi";
+import { FiBookOpen, FiMapPin } from "react-icons/fi";
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 export function Footer() {
@@ -107,29 +107,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm text-base-content/80 font-sans">
               <li className="flex items-start gap-2.5">
                 <FiMapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span>42 Inkwell Lane, Bibliophile Quarter, Cambridge, MA 02138</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <FiMail className="w-4 h-4 text-secondary shrink-0" />
-                <a
-                  href="mailto:hello@booknook.library"
-                  className="hover:text-primary transition-colors"
-                >
-                  hello@booknook.library
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <FiPhone className="w-4 h-4 text-accent shrink-0" />
-                <a
-                  href="tel:+15557426665"
-                  className="hover:text-primary transition-colors"
-                >
-                  +1 (555) 742-6665
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <FiClock className="w-4 h-4 text-primary shrink-0" />
-                <span>Open daily for readers: 8:00 AM – 9:00 PM EST</span>
+                <span>Savar, Dhaka, Bangladesh</span>
               </li>
             </ul>
           </div>

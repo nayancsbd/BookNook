@@ -20,6 +20,9 @@ export interface Book {
   rating?: number;
   userName?: string;
   userEmail?: string;
+  addedBy?: string;
+  addedByEmail?: string;
+  addedByName?: string;
   createdAt?: string;
 }
 

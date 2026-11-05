@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Book } from "@/types/book";
@@ -8,6 +8,7 @@ import { BookCard } from "@/components/books/BookCard";
 import { Heading } from "@/components/ui/Heading";
 import { Spinner } from "@/components/ui/Spinner";
 import { Button } from "@/components/ui/Button";
+import { getApiUrl } from "@/lib/utils";
 import {
   FiSearch,
   FiX,
@@ -25,129 +26,6 @@ const CATEGORIES: { label: string; value: string }[] = [
   { label: "Others", value: "Others" },
 ];
 
-const INITIAL_CATALOG: Book[] = [
-  {
-    _id: "book_01",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Between life and death there is a library containing infinite books, each telling the story of another reality you could have lived.",
-  },
-  {
-    _id: "book_02",
-    title: "Cosmos",
-    author: "Carl Sagan",
-    category: "Science",
-    image:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
-    description:
-      "The story of fifteen billion years of cosmic evolution transforming matter into consciousness.",
-  },
-  {
-    _id: "book_03",
-    title: "Sapiens: A Brief History of Humankind",
-    author: "Yuval Noah Harari",
-    category: "History",
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A groundbreaking survey of how human biology and history have defined us and enhanced our understanding of what it means to be human.",
-  },
-  {
-    _id: "book_04",
-    title: "The Little Prince",
-    author: "Antoine de Saint-Exupéry",
-    category: "Kids",
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A poetic tale of a young prince who visits various planets in space, addressing themes of loneliness, friendship, love, and loss.",
-  },
-  {
-    _id: "book_05",
-    title: "Braiding Sweetgrass",
-    author: "Robin Wall Kimmerer",
-    category: "Others",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Indigenous wisdom, scientific knowledge, and the teachings of plants reveal how living creatures offer gifts and lessons.",
-  },
-  {
-    _id: "book_06",
-    title: "Before the Coffee Gets Cold",
-    author: "Toshikazu Kawaguchi",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600",
-    description:
-      "In a small back alley in Tokyo, there is a café which has been brewing carefully crafted coffee for more than one hundred years.",
-  },
-  {
-    _id: "book_07",
-    title: "The Shadow of the Wind",
-    author: "Carlos Ruiz Zafón",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Barcelona, 1945: A boy is taken to the secret Cemetery of Forgotten Books to choose a volume that will change his destiny.",
-  },
-  {
-    _id: "book_08",
-    title: "A Brief History of Time",
-    author: "Stephen Hawking",
-    category: "Science",
-    image:
-      "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A landmark volume in science writing explores the frontiers of time and space, black holes, and the origins of the universe.",
-  },
-  {
-    _id: "book_09",
-    title: "The Silk Roads: A New History",
-    author: "Peter Frankopan",
-    category: "History",
-    image:
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=600",
-    description:
-      "An exhilarating journey through the historical forces that shaped world civilizations along ancient trading routes.",
-  },
-  {
-    _id: "book_10",
-    title: "Charlotte's Web",
-    author: "E.B. White",
-    category: "Kids",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A tender story of friendship between a livestock pig named Wilbur and an extraordinarily compassionate barn spider named Charlotte.",
-  },
-  {
-    _id: "book_11",
-    title: "Meditations",
-    author: "Marcus Aurelius",
-    category: "Others",
-    image:
-      "https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Private reflections and timeless stoic wisdom from the Roman Emperor on discipline, virtue, resilience, and inner peace.",
-  },
-  {
-    _id: "book_12",
-    title: "Astrophysics for People in a Hurry",
-    author: "Neil deGrasse Tyson",
-    category: "Science",
-    image:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A mind-expanding overview of cosmic principles, quantum mechanics, and the search for life in the universe.",
-  },
-];
-
 export function BooksCatalog() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -157,7 +35,7 @@ export function BooksCatalog() {
 
   const [search, setSearch] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [serverBooks, setServerBooks] = useState<Book[] | null>(null);
+  const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -166,8 +44,6 @@ export function BooksCatalog() {
     async function fetchBooks() {
       setIsLoading(true);
       try {
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const baseUrl = rawApiUrl.replace(/\/+$/, "");
         const queryParams = new URLSearchParams();
 
         if (search.trim()) {
@@ -178,9 +54,7 @@ export function BooksCatalog() {
         }
 
         const qs = queryParams.toString() ? `?${queryParams.toString()}` : "";
-        const targetUrl = baseUrl.endsWith("/api")
-          ? `${baseUrl}/books${qs}`
-          : `${baseUrl}/api/books${qs}`;
+        const targetUrl = getApiUrl(`/books${qs}`);
 
         const res = await fetch(targetUrl);
         if (res.ok) {
@@ -189,13 +63,13 @@ export function BooksCatalog() {
             ? data
             : data.books || data.data || [];
           if (isMounted) {
-            setServerBooks(items);
+            setBooks(items);
           }
         } else {
-          if (isMounted) setServerBooks(null);
+          if (isMounted) setBooks([]);
         }
       } catch {
-        if (isMounted) setServerBooks(null);
+        if (isMounted) setBooks([]);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -245,25 +119,7 @@ export function BooksCatalog() {
     updateUrlParams("", "All");
   };
 
-  const displayedBooks = useMemo(() => {
-    if (serverBooks !== null) {
-      return serverBooks;
-    }
-
-    return INITIAL_CATALOG.filter((book) => {
-      const matchesCategory =
-        selectedCategory === "All" ||
-        book.category.toLowerCase() === selectedCategory.toLowerCase();
-
-      const term = search.trim().toLowerCase();
-      const matchesSearch =
-        !term ||
-        book.title.toLowerCase().includes(term) ||
-        book.author.toLowerCase().includes(term);
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [serverBooks, search, selectedCategory]);
+  const displayedBooks = books;
 
   return (
     <motion.div

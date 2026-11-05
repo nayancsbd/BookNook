@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 
 export default function MyBooksPage() {
   return (
-    <PrivateRoute>
-      <Suspense
-        fallback={
-          <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
-            <Spinner size="lg" label="Retrieving your contributed books..." />
-          </div>
-        }
-      >
+    <Suspense
+      fallback={
+        <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center py-20 px-4">
+          <Spinner size="lg" label="Retrieving your contributed books..." />
+        </div>
+      }
+    >
+      <PrivateRoute>
         <MyBooksView />
-      </Suspense>
-    </PrivateRoute>
+      </PrivateRoute>
+    </Suspense>
   );
 }

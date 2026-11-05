@@ -84,7 +84,8 @@ export function HomeHeroSlider() {
                 <Heading
                   as="h1"
                   size="hero"
-                  className="text-white text-3xl sm:text-5xl lg:text-6xl drop-shadow-sm leading-tight"
+                  className="!text-white text-3xl sm:text-5xl lg:text-6xl drop-shadow-sm leading-tight"
+                  style={{ color: "#ffffff" }}
                 >
                   {slide.title}
                 </Heading>

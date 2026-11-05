@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useApiToken } from "@/hooks/useApiToken";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
+import { getApiUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   FiBook,
@@ -157,12 +158,7 @@ export function AddBookForm() {
       }
 
       const token = await fetchToken();
-
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const baseUrl = rawApiUrl.replace(/\/+$/, "");
-      const targetUrl = baseUrl.endsWith("/api")
-        ? `${baseUrl}/books`
-        : `${baseUrl}/api/books`;
+      const targetUrl = getApiUrl("/books");
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",

@@ -9,6 +9,7 @@ import { useApiToken } from "@/hooks/useApiToken";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { getApiUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   FiBookOpen,
@@ -48,15 +49,11 @@ export function MyBorrowsView() {
 
       try {
         const token = await fetchToken();
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const baseUrl = rawApiUrl.replace(/\/+$/, "");
-        const targetUrl = baseUrl.endsWith("/api")
-          ? `${baseUrl}/borrows`
-          : `${baseUrl}/api/borrows`;
-
-        const urlWithQuery = user?.email
-          ? `${targetUrl}?userEmail=${encodeURIComponent(user.email)}`
-          : targetUrl;
+        const targetUrl = getApiUrl(
+          user?.email
+            ? `/borrows?userEmail=${encodeURIComponent(user.email)}`
+            : "/borrows"
+        );
 
         const headers: Record<string, string> = {
           "Content-Type": "application/json",
@@ -66,7 +63,7 @@ export function MyBorrowsView() {
           headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const res = await fetch(urlWithQuery, {
+        const res = await fetch(targetUrl, {
           method: "GET",
           headers,
         });
@@ -79,41 +76,20 @@ export function MyBorrowsView() {
 
           if (isMounted) {
             setBorrows(items);
-            setIsLoading(false);
-            return;
+          }
+        } else {
+          if (isMounted) {
+            setBorrows([]);
           }
         }
       } catch {
-      }
-
-      if (isMounted) {
-        const fallbackBorrows: BorrowRecord[] = [
-          {
-            _id: "loan_01",
-            bookId: "b_01",
-            bookTitle: "The Midnight Library",
-            bookImage:
-              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
-            userEmail: user?.email || "reader@booknook.local",
-            userName: user?.name || "Library Reader",
-            borrowDate: "2026-11-01",
-            returnDate: "2026-11-15",
-          },
-          {
-            _id: "loan_02",
-            bookId: "b_02",
-            bookTitle: "Braiding Sweetgrass",
-            bookImage:
-              "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
-            userEmail: user?.email || "reader@booknook.local",
-            userName: user?.name || "Library Reader",
-            borrowDate: "2026-10-28",
-            returnDate: "2026-11-11",
-          },
-        ];
-
-        setBorrows(fallbackBorrows);
-        setIsLoading(false);
+        if (isMounted) {
+          setBorrows([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
@@ -144,11 +120,7 @@ export function MyBorrowsView() {
 
     try {
       const token = await fetchToken();
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const baseUrl = rawApiUrl.replace(/\/+$/, "");
-      const targetUrl = baseUrl.endsWith("/api")
-        ? `${baseUrl}/borrows/${recordId}`
-        : `${baseUrl}/api/borrows/${recordId}`;
+      const targetUrl = getApiUrl(`/borrows/${recordId}`);
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -176,12 +148,11 @@ export function MyBorrowsView() {
       toast.success("Book Returned Successfully", {
         description: `"${bookTitle}" has been returned to the BookNook sanctuary.`,
       });
-    } catch {
-      setBorrows((prev) => prev.filter((b) => (b._id || b.id) !== recordId));
-      setReturningBorrow(null);
-
-      toast.success("Book Returned Successfully", {
-        description: `"${bookTitle}" has been returned to the BookNook sanctuary.`,
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to return book to shelves.";
+      toast.error("Return Failed", {
+        description: message,
       });
     } finally {
       setIsSubmittingReturn(false);

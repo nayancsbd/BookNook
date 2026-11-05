@@ -6,73 +6,11 @@ import { BookCard } from "@/components/books/BookCard";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { getApiUrl } from "@/lib/utils";
 import { FiArrowRight, FiBookOpen } from "react-icons/fi";
 
-const FALLBACK_BOOKS: Book[] = [
-  {
-    _id: "book_01",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Between life and death there is a library containing infinite books, each telling the story of another reality you could have lived.",
-  },
-  {
-    _id: "book_02",
-    title: "Cosmos",
-    author: "Carl Sagan",
-    category: "Science",
-    image:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600",
-    description:
-      "The story of fifteen billion years of cosmic evolution transforming matter into consciousness.",
-  },
-  {
-    _id: "book_03",
-    title: "Sapiens: A Brief History of Humankind",
-    author: "Yuval Noah Harari",
-    category: "History",
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A groundbreaking survey of how human biology and history have defined us and enhanced our understanding of what it means to be human.",
-  },
-  {
-    _id: "book_04",
-    title: "The Little Prince",
-    author: "Antoine de Saint-Exupéry",
-    category: "Kids",
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
-    description:
-      "A poetic tale of a young prince who visits various planets in space, addressing themes of loneliness, friendship, love, and loss.",
-  },
-  {
-    _id: "book_05",
-    title: "Braiding Sweetgrass",
-    author: "Robin Wall Kimmerer",
-    category: "Others",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600",
-    description:
-      "Indigenous wisdom, scientific knowledge, and the teachings of plants reveal how living creatures offer gifts and lessons.",
-  },
-  {
-    _id: "book_06",
-    title: "Before the Coffee Gets Cold",
-    author: "Toshikazu Kawaguchi",
-    category: "Fiction",
-    image:
-      "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600",
-    description:
-      "In a small back alley in Tokyo, there is a café which has been brewing carefully crafted coffee for more than one hundred years.",
-  },
-];
-
 export function NewArrivals() {
-  const [books, setBooks] = useState<Book[]>(FALLBACK_BOOKS);
+  const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -80,12 +18,7 @@ export function NewArrivals() {
 
     async function fetchNewArrivals() {
       try {
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const baseUrl = rawApiUrl.replace(/\/+$/, "");
-        const targetUrl = baseUrl.endsWith("/api")
-          ? `${baseUrl}/books?sort=newest&limit=6`
-          : `${baseUrl}/api/books?sort=newest&limit=6`;
-
+        const targetUrl = getApiUrl("/books?sort=newest&limit=6");
         const res = await fetch(targetUrl);
         if (res.ok) {
           const data = await res.json();
@@ -93,11 +26,14 @@ export function NewArrivals() {
             ? data
             : data.books || data.data || [];
 
-          if (isMounted && items.length > 0) {
+          if (isMounted) {
             setBooks(items.slice(0, 6));
           }
         }
       } catch {
+        if (isMounted) {
+          setBooks([]);
+        }
       } finally {
         if (isMounted) {
           setIsLoading(false);
