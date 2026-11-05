@@ -50,7 +50,9 @@ export function BookCard({ book, className = "" }: BookCardProps) {
         </div>
         <div className="absolute top-3 right-3">
           <span className="badge badge-sm font-sans font-semibold tracking-wide bg-base-100/90 text-secondary border border-base-300 backdrop-blur-md shadow-xs">
-            {book.copies > 0 ? `${book.copies} copies` : "Out of stock"}
+            {(book.copies ?? 0) > 0
+              ? `${book.copies} copies`
+              : "Out of stock"}
           </span>
         </div>
       </Link>
